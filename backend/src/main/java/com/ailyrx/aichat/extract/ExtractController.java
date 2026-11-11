@@ -1,6 +1,7 @@
 package com.ailyrx.aichat.extract;
 
 import com.ailyrx.aichat.common.ApiResponse;
+import com.ailyrx.aichat.common.ErrorCodes;
 import com.ailyrx.aichat.config.TraceIdFilter;
 import com.ailyrx.aichat.llm.LlmException;
 import jakarta.validation.Valid;
@@ -33,10 +34,10 @@ public class ExtractController {
                     extractionService.extract(request.normalizedText(), traceId),
                     traceId);
         } catch (ExtractionParseException exception) {
-            return ApiResponse.error(5003, exception.getMessage(), traceId);
+            return ApiResponse.error(ErrorCodes.EXTRACTION_PARSE_FAILED, exception.getMessage(), traceId);
         } catch (LlmException exception) {
             log.error("extract model call failed traceId={}", traceId, exception);
-            return ApiResponse.error(5001, "模型调用失败", traceId);
+            return ApiResponse.error(ErrorCodes.MODEL_CALL_FAILED, "模型调用失败", traceId);
         }
     }
 }

@@ -146,13 +146,17 @@ public class LlmClient {
 
         int timeoutSeconds = properties.timeoutSeconds() > 0 ? properties.timeoutSeconds() : 60;
 
-        return HttpRequest.newBuilder(buildEndpoint())
-                .timeout(Duration.ofSeconds(timeoutSeconds))
+        HttpRequest.Builder builder = HttpRequest.newBuilder(buildEndpoint())
                 .header("Authorization", "Bearer " + properties.apiKey())
                 .header("Content-Type", "application/json")
                 .header("Accept", stream ? "text/event-stream" : "application/json")
-                .POST(HttpRequest.BodyPublishers.ofByteArray(objectMapper.writeValueAsBytes(payload)))
-                .build();
+                .POST(HttpRequest.BodyPublishers.ofByteArray(objectMapper.writeValueAsBytes(payload)));
+
+        if (!stream) {
+            // 流式响应持续时间不可预估，仅非流式请求设置整体超时。
+            builder.timeout(Duration.ofSeconds(timeoutSeconds));
+        }
+        return builder.build();
     }
 
     private URI buildEndpoint() {

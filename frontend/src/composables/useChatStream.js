@@ -123,6 +123,11 @@ export function useChatStream() {
         error.value = assistant.error
       }
     } catch (caught) {
+      if (terminalReceived) {
+        // 已收到 done 后，残留的读取异常不应覆盖已完成消息。
+        return
+      }
+
       if (caught.name === 'AbortError') {
         assistant.status = 'stopped'
       } else {

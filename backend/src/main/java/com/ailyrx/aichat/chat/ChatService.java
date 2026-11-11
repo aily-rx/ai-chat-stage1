@@ -1,5 +1,6 @@
 package com.ailyrx.aichat.chat;
 
+import com.ailyrx.aichat.common.ErrorCodes;
 import com.ailyrx.aichat.llm.LlmClient;
 import com.ailyrx.aichat.prompt.PromptService;
 import java.io.IOException;
@@ -94,7 +95,7 @@ public class ChatService {
             emitter.send(SseEmitter.event()
                     .name("error")
                     .data(Map.of(
-                            "code", 5001,
+                            "code", ErrorCodes.MODEL_CALL_FAILED,
                             "message", "模型调用失败",
                             "traceId", traceId)));
         } catch (IOException | IllegalStateException exception) {
