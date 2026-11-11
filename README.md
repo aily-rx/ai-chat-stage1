@@ -45,7 +45,14 @@ npm run dev
 
 默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://127.0.0.1:5173
 
-后端就绪后，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`。
+真实联调时，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`：
+
+```bash
+cd frontend
+cp .env.example .env
+# 将 VITE_USE_MOCK=true 改为 false
+npm run dev
+```
 
 ## 后端运行
 
@@ -86,11 +93,7 @@ curl -N -X POST http://localhost:8080/api/chat/stream   -H "Content-Type: applic
 结构化抽取：
 
 ```bash
-curl -X POST http://localhost:8080/api/extract   -H "Content-Type: application/json"   -d '{"text":"关于开展安全生产检查的通知
-各部门：
-……
-XX办公室
-2026年11月1日"}'
+curl -X POST http://localhost:8080/api/extract   -H "Content-Type: application/json"   -d '{"text":"关于开展安全生产检查的通知\n各部门：\n……\nXX办公室\n2026年11月1日"}'
 ```
 
 完整请求、SSE 事件和错误码说明见 [接口文档](docs/api.md)。五个抽取字段固定为 `docType`、`title`、`recipient`、`signature`、`date`；无法识别时返回 `null`。
