@@ -9,7 +9,7 @@
 ## 当前进度
 
 - [x] S0 环境与凭证
-- [ ] S1 项目骨架
+- [ ] S1 项目骨架（前端原型已完成，后端待创建）
 - [ ] S2 后端 SSE 接口
 - [ ] S3 前端流式页面
 - [ ] S4 Prompt 变量与首字延迟
@@ -34,6 +34,18 @@ cp .env.example .env
 ```
 
 `.env` 已被 `.gitignore` 忽略，禁止提交真实 Key。
+
+## 前端运行（演示模式）
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://127.0.0.1:5173
+
+后端就绪后，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`。
 
 ## 提交规范
 
@@ -75,4 +87,4 @@ ai-chat-stage1/
 - [前端原型设计](docs/frontend-prototype.md)
 - [Dify 部署记录](docs/dify-setup.md)
 
-启动步骤将在 S1 完成后补充。
+后端启动步骤将在 S1 后端骨架完成后补充。
