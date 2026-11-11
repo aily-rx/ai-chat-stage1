@@ -16,7 +16,9 @@
 - [x] S5 结构化抽取接口
 - [x] S6 工程化收尾
 - [x] S7 文档与样例
-- [ ] S8 Dify + PR + 汇报材料
+- [x] S8 Dify + PR + 汇报材料
+
+阶段一交付 tag：`stage1-v1`；PR：[#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)。
 
 ## 环境要求
 
@@ -25,6 +27,7 @@
 - Node.js 18+
 - npm
 - Git
+- Docker Desktop（仅 Dify 独立交付物需要）
 
 ## 配置
 
@@ -43,7 +46,7 @@ npm install
 npm run dev
 ```
 
-默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://127.0.0.1:5173
+默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://localhost:5173（Windows 下建议使用 `localhost`，避免 IPv6 解析差异）。
 
 真实联调时，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`：
 
@@ -98,6 +101,18 @@ curl -X POST http://localhost:8080/api/extract   -H "Content-Type: application/j
 
 完整请求、SSE 事件和错误码说明见 [接口文档](docs/api.md)。五个抽取字段固定为 `docType`、`title`、`recipient`、`signature`、`date`；无法识别时返回 `null`。
 
+## Dify（独立交付物）
+
+本地 Dify 1.19.0 默认地址：http://localhost/
+
+```bash
+cd E:/Dify/dify/docker
+docker compose up -d
+docker compose ps
+```
+
+已创建 Chatbot「公文问答助手」，用于公文写作与行政办公问答演示；Dify 不接入主链路。版本、测试问题与结果见 [Dify 部署记录](docs/dify-setup.md)。
+
 ## 提交规范
 
 - 提交信息统一使用中文。
@@ -138,4 +153,8 @@ ai-chat-stage1/
 - [前端原型设计](docs/frontend-prototype.md)
 - [联调与性能测试记录](docs/streaming-test.md)
 - [Dify 部署记录](docs/dify-setup.md)
+- [PR 与评审记录](docs/pr-log.md)
+- [阶段一汇报单](docs/report-stage1.md)
+- [演示脚本](docs/demo-script.md)
+- [抽取样例 JSON](docs/samples/extract-normal.json)
 - [Prompt 样例](prompts/chat-formal.md)
