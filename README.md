@@ -9,7 +9,7 @@
 ## 当前进度
 
 - [x] S0 环境与凭证
-- [ ] S1 项目骨架（前端原型已完成，后端待创建）
+- [x] S1 项目骨架
 - [ ] S2 后端 SSE 接口
 - [ ] S3 前端流式页面
 - [ ] S4 Prompt 变量与首字延迟
@@ -46,6 +46,32 @@ npm run dev
 默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://127.0.0.1:5173
 
 后端就绪后，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`。
+
+## 后端运行
+
+在项目根目录执行，`application.yml` 会自动读取根目录或 `backend/` 下的 `.env`：
+
+```bash
+# 运行测试
+mvn -f backend/pom.xml test
+
+# 启动后端
+mvn -f backend/pom.xml spring-boot:run
+```
+
+健康检查：
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+预期响应：
+
+```json
+{"code":0,"message":"ok","data":"ok","traceId":"a1b2c3d4"}
+```
+
+响应头同时包含 `X-Trace-Id`。技术栈：Spring Boot 3.3.5、Java 17、Maven。
 
 ## 提交规范
 
@@ -86,5 +112,3 @@ ai-chat-stage1/
 - [阶段一接口文档](docs/api.md)
 - [前端原型设计](docs/frontend-prototype.md)
 - [Dify 部署记录](docs/dify-setup.md)
-
-后端启动步骤将在 S1 后端骨架完成后补充。
