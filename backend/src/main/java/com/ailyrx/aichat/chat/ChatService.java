@@ -5,6 +5,7 @@ import com.ailyrx.aichat.prompt.PromptService;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,17 @@ public class ChatService {
             String traceId,
             SseEmitter emitter,
             AtomicBoolean closed) {
+        AtomicInteger characterCount = new AtomicInteger();
+
         try {
             String systemPrompt = promptService.buildChatPrompt(style);
             llmClient.streamChat(
                     systemPrompt,
                     message,
-                    delta -> sendDelta(emitter, delta, closed),
+                    delta -> {
+                        characterCount.addAndGet(delta.length());
+                        sendDelta(emitter, delta, closed);
+                    },
                     closed::get,
                     traceId);
 
@@ -42,6 +48,7 @@ public class ChatService {
                 return;
             }
 
+            log.info("chat stream completed traceId={} chars={}", traceId, characterCount.get());
             sendEvent(emitter, SseEmitter.event()
                     .name("done")
                     .data(Map.of("traceId", traceId)), closed);

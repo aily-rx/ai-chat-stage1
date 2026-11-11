@@ -15,3 +15,7 @@ app:
     api-key: ${LLM_API_KEY:}
     model: ${LLM_MODEL:deepseek-chat}
     timeout-seconds: ${LLM_TIMEOUT_SECONDS:60}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%X{traceId:--}] [%15.15t] %-40.40logger{39} : %m%n"

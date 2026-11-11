@@ -12,10 +12,10 @@
 - [x] S1 项目骨架
 - [x] S2 后端 SSE 接口
 - [x] S3 前端流式页面
-- [ ] S4 Prompt 变量与首字延迟（样式已实现，待补 5 次延迟记录）
+- [x] S4 Prompt 变量与首字延迟
 - [x] S5 结构化抽取接口
-- [ ] S6 工程化收尾
-- [ ] S7 文档与样例
+- [x] S6 工程化收尾
+- [x] S7 文档与样例
 - [ ] S8 Dify + PR + 汇报材料
 
 ## 环境要求
@@ -133,4 +133,6 @@ ai-chat-stage1/
 
 - [阶段一接口文档](docs/api.md)
 - [前端原型设计](docs/frontend-prototype.md)
+- [联调与性能测试记录](docs/streaming-test.md)
 - [Dify 部署记录](docs/dify-setup.md)
+- [Prompt 样例](prompts/chat-formal.md)
