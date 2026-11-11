@@ -2,6 +2,10 @@
 
 阶段一实践项目：Vue3 + Spring Boot + DeepSeek API 的流式对话应用，包含公文结构化抽取接口。Dify 作为独立交付物部署，不接入主链路。
 
+## 仓库
+
+- GitHub（私有）：https://github.com/aily-rx/ai-chat-stage1
+
 ## 当前进度
 
 - [x] S0 环境与凭证
