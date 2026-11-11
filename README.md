@@ -72,6 +72,7 @@ ai-chat-stage1/
 ## 文档
 
 - [阶段一接口文档](docs/api.md)
+- [前端原型设计](docs/frontend-prototype.md)
 - [Dify 部署记录](docs/dify-setup.md)
 
 启动步骤将在 S1 完成后补充。
