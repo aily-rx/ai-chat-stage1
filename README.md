@@ -9,14 +9,16 @@
 ## 当前进度
 
 - [x] S0 环境与凭证
-- [ ] S1 项目骨架
-- [ ] S2 后端 SSE 接口
-- [ ] S3 前端流式页面
-- [ ] S4 Prompt 变量与首字延迟
-- [ ] S5 结构化抽取接口
-- [ ] S6 工程化收尾
-- [ ] S7 文档与样例
-- [ ] S8 Dify + PR + 汇报材料
+- [x] S1 项目骨架
+- [x] S2 后端 SSE 接口
+- [x] S3 前端流式页面
+- [x] S4 Prompt 变量与首字延迟
+- [x] S5 结构化抽取接口
+- [x] S6 工程化收尾
+- [x] S7 文档与样例
+- [x] S8 Dify + PR + 汇报材料
+
+阶段一交付 tag：`stage1-v1`；PR：[#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)。
 
 ## 环境要求
 
@@ -25,6 +27,7 @@
 - Node.js 18+
 - npm
 - Git
+- Docker Desktop（仅 Dify 独立交付物需要）
 
 ## 配置
 
@@ -34,6 +37,81 @@ cp .env.example .env
 ```
 
 `.env` 已被 `.gitignore` 忽略，禁止提交真实 Key。
+
+## 前端运行（演示模式）
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://localhost:5173（Windows 下建议使用 `localhost`，避免 IPv6 解析差异）。
+
+真实联调时，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`：
+
+```bash
+cd frontend
+cp .env.example .env
+# 将 VITE_USE_MOCK=true 改为 false
+npm run dev
+```
+
+## 后端运行
+
+在项目根目录执行，`application.yml` 会自动读取根目录或 `backend/` 下的 `.env`：
+
+```bash
+# 运行测试
+mvn -f backend/pom.xml test
+
+# 启动后端
+mvn -f backend/pom.xml spring-boot:run
+```
+
+健康检查：
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+预期响应：
+
+```json
+{"code":0,"message":"ok","data":"ok","traceId":"a1b2c3d4"}
+```
+
+响应头同时包含 `X-Trace-Id`。技术栈：Spring Boot 3.3.5、Java 17、Maven。
+
+## 接口验证
+
+流式对话：
+
+```bash
+curl -N -X POST http://localhost:8080/api/chat/stream   -H "Content-Type: application/json"   -d '{"message":"用三句话介绍RAG","style":"formal"}'
+```
+
+预期收到多条 `event: message`，并以 `event: done` 结束。将 `style` 改为 `concise` 可对比输出风格。
+
+结构化抽取：
+
+```bash
+curl -X POST http://localhost:8080/api/extract   -H "Content-Type: application/json"   -d '{"text":"关于开展安全生产检查的通知\n各部门：\n……\nXX办公室\n2026年11月1日"}'
+```
+
+完整请求、SSE 事件和错误码说明见 [接口文档](docs/api.md)。五个抽取字段固定为 `docType`、`title`、`recipient`、`signature`、`date`；无法识别时返回 `null`。
+
+## Dify（独立交付物）
+
+本地 Dify 1.19.0 默认地址：http://localhost/
+
+```bash
+cd E:/Dify/dify/docker
+docker compose up -d
+docker compose ps
+```
+
+已创建 Chatbot「公文问答助手」，用于公文写作与行政办公问答演示；Dify 不接入主链路。版本、测试问题与结果见 [Dify 部署记录](docs/dify-setup.md)。
 
 ## 提交规范
 
@@ -73,6 +151,10 @@ ai-chat-stage1/
 
 - [阶段一接口文档](docs/api.md)
 - [前端原型设计](docs/frontend-prototype.md)
+- [联调与性能测试记录](docs/streaming-test.md)
 - [Dify 部署记录](docs/dify-setup.md)
-
-启动步骤将在 S1 完成后补充。
+- [PR 与评审记录](docs/pr-log.md)
+- [阶段一汇报单](docs/report-stage1.md)
+- [演示脚本](docs/demo-script.md)
+- [抽取样例 JSON](docs/samples/extract-normal.json)
+- [Prompt 样例](prompts/chat-formal.md)
