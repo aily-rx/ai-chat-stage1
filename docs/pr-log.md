@@ -68,6 +68,19 @@
 
 主要变更：补充 2102 字符长回答不截断证据、9367 字符长文本抽取证据、10001 字符边界测试及对应测试用例。
 
+## PR #5：阶段一最终收口
+
+| 项目 | 内容 |
+|---|---|
+| 标题 | chore(release): 完成阶段一最终收口 |
+| 链接 | https://github.com/aily-rx/ai-chat-stage1/pull/5 |
+| 源分支 | `chore/s1-final-closeout` |
+| 目标分支 | `main` |
+| 状态 | 已合并；合并后建立最终交付 tag `stage1-v1.1` |
+| 评审方式 | 单人仓库，按发布清单自检；无第二评审人 |
+
+主要变更：新增仅开发源可用的 CORS 配置及正反两个预检用例；同步测试数、接口文档、汇报单和 Dify 记录；补充 Dify 重启后 Web App 通道复测样例。最终测试总数 28，`npm run build` 成功。
+
 ## 回归验证
 
 - `mvn -f backend/pom.xml test`：28 个测试，0 失败（最终收口复测）。
@@ -79,5 +92,5 @@
 ## 合并与 tag
 
 - PR #1 合并后建立初始里程碑 tag `stage1-v1`（commit `1c96bb3`）。
-- PR #2–#4 已依次合并到 `main`；最终收口 PR 审批合并后建立最终交付 tag `stage1-v1.1`。
-- 初始 tag 保留不动，最终交付以 `stage1-v1.1` 指向的 commit 为准。
+- PR #2–#4 已依次合并到 `main`；PR #5 完成最终收口。
+- PR #5 合并后建立最终交付 tag `stage1-v1.1`；初始 tag 保留不动，最终交付以 `stage1-v1.1` 指向的 commit 为准。
