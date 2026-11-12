@@ -1,0 +1,22 @@
+{
+  "request": {
+    "message": "请写一份不少于 1200 字的中文技术说明，主题为 RAG（检索增强生成）。要求：1）使用 Markdown；2）至少包含三个二级标题；3）包含一个完整的 Java 代码块示例；4）最后单独一行输出【END-OF-ANSWER】；不要解释写作过程。",
+    "style": "formal"
+  },
+  "http_status": 200,
+  "first_token_s": 0.619,
+  "total_s": 5.466,
+  "delta_events": 844,
+  "done_received": true,
+  "error_event": null,
+  "trace_id": "92de515b",
+  "chars": 2102,
+  "checks": {
+    "over_800_chars": true,
+    "ends_with_marker": true,
+    "code_fence_count": 2,
+    "code_fence_balanced": true
+  },
+  "tail": "\n1. **切分策略**：块过小易丢失上下文，过大则引入噪声，应结合文档结构与问题类型调优。\n2. **检索质量**：可采用混合检索（向量检索与关键词检索结合）提升召回率，并通过重排模型提高精度。\n3. **提示约束**：明确要求模型仅依据检索内容作答，降低幻觉风险。\n4. **评估与迭代**：建立检索命中率、答案忠实度等指标，持续优化各环节参数。\n\n## 五、总结\n\nRAG 通过“检索—增强—生成”的流水线，将外部知识动态引入生成过程，兼顾了回答的准确性与可维护性。工程落地时应重点关注文档切分、检索召回与提示构造三个环节，并结合业务场景建立可量化的评估体系。\n\n【END-OF-ANSWER】",
+  "full_text": "# RAG（检索增强生成）技术说明\n\n## 一、技术概述\n\nRAG（Retrieval-Augmented Generation，检索增强生成）是一种将信息检索与大语言模型生成能力相结合的技术架构。其核心思想是在模型生成回答前，先从外部知识库中检索与用户问题相关的文档片段，将其作为上下文注入提示词，从而提升回答的准确性、时效性与可追溯性。RAG 可有效缓解大模型知识固化、易产生幻觉等问题，适用于企业知识问答、智能客服、文档辅助分析等场景。\n\n## 二、系统组成与处理流程\n\nRAG 系统通常由知识入库与在线检索生成两条链路构成。\n\n**（一）知识入库链路**\n\n1. 文档解析：对 PDF、Word、网页等原始资料进行文本抽取与清洗。\n2. 文本切分：按固定长度或语义边界切分为若干块（Chunk），并保留来源元数据。\n3. 向量化：调用嵌入模型将文本块转换为稠密向量。\n4. 索引存储：将向量及元数据写入向量数据库，建立检索索引。\n\n**（二）在线检索生成链路**\n\n1. 查询处理：对用户问题做改写、扩展或分词。\n2. 向量检索：将问题向量化后在向量库中执行相似度检索，返回 Top-K 候选片段。\n3. 重排过滤：依据相关度阈值或重排模型对候选片段进行筛选。\n4. 提示构造：将筛选后的片段与问题拼接为提示词。\n5. 生成回答：调用大语言模型生成最终答案，并可附带引用来源。\n\n## 三、Java 实现示例\n\n以下示例演示检索与提示构造的核心环节，向量检索接口与模型调用接口以占位实现表示。\n\n```java\nimport java.util.List;\nimport java.util.stream.Collectors;\n\npublic class RagService {\n\n    private final EmbeddingClient embeddingClient;\n    private final VectorStore vectorStore;\n    private final LlmClient llmClient;\n\n    public RagService(EmbeddingClient embeddingClient,\n                      VectorStore vectorStore,\n                      LlmClient llmClient) {\n        this.embeddingClient = embeddingClient;\n        this.vectorStore = vectorStore;\n        this.llmClient = llmClient;\n    }\n\n    public String answer(String question, int topK) {\n        // 1. 问题向量化\n        float[] queryVector = embeddingClient.embed(question);\n\n        // 2. 向量检索\n        List<DocumentChunk> chunks = vectorStore.search(queryVector, topK);\n\n        // 3. 构造上下文\n        String context = chunks.stream()\n                .map(DocumentChunk::getContent)\n                .collect(Collectors.joining(\"\\n---\\n\"));\n\n        // 4. 组装提示词\n        String prompt = \"请依据以下资料回答问题，若资料不足请明确说明。\\n\"\n                + \"资料：\\n\" + context + \"\\n\"\n                + \"问题：\" + question;\n\n        // 5. 调用大模型生成\n        return llmClient.generate(prompt);\n    }\n}\n```\n\n## 四、关键设计要点\n\n1. **切分策略**：块过小易丢失上下文，过大则引入噪声，应结合文档结构与问题类型调优。\n2. **检索质量**：可采用混合检索（向量检索与关键词检索结合）提升召回率，并通过重排模型提高精度。\n3. **提示约束**：明确要求模型仅依据检索内容作答，降低幻觉风险。\n4. **评估与迭代**：建立检索命中率、答案忠实度等指标，持续优化各环节参数。\n\n## 五、总结\n\nRAG 通过“检索—增强—生成”的流水线，将外部知识动态引入生成过程，兼顾了回答的准确性与可维护性。工程落地时应重点关注文档切分、检索召回与提示构造三个环节，并结合业务场景建立可量化的评估体系。\n\n【END-OF-ANSWER】"
+}
