@@ -1,0 +1,29 @@
+{
+  "input_chars": 9367,
+  "input_file": "docs/samples/extract-long-input.json",
+  "http_status": 200,
+  "elapsed_s": 1.477,
+  "body": {
+    "code": 0,
+    "message": "ok",
+    "data": {
+      "docType": "通知",
+      "title": "关于开展2026年第四季度安全生产大检查的通知",
+      "recipient": "各部门",
+      "signature": "XX公司办公室",
+      "date": "2026-11-12"
+    },
+    "traceId": "aad7fc04"
+  },
+  "overlimit": {
+    "input_chars": 10001,
+    "http_status": 400,
+    "elapsed_s": 0.022,
+    "body": {
+      "code": 4000,
+      "message": "text 不能超过 10000 字符",
+      "data": null,
+      "traceId": "883f21b3"
+    }
+  }
+}

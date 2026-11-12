@@ -100,6 +100,21 @@ class ExtractControllerTest {
                 .andExpect(jsonPath("$.message").value("text 不能为空"));
     }
 
+    @Test
+    void rejectsOverlongText() throws Exception {
+        String payload = objectMapper.createObjectNode()
+                .put("text", "安".repeat(10001))
+                .toString();
+
+        mockMvc.perform(post("/api/extract")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isBadRequest())
+                .andExpect(header().exists("X-Trace-Id"))
+                .andExpect(jsonPath("$.code").value(4000))
+                .andExpect(jsonPath("$.message").value("text 不能超过 10000 字符"));
+    }
+
     private JsonNode readBody(MvcResult result) throws Exception {
         return objectMapper.readTree(
                 result.getResponse().getContentAsString(StandardCharsets.UTF_8));
