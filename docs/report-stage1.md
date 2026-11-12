@@ -8,7 +8,7 @@
 | 指导教师 | （待填写） |
 | 仓库 | https://github.com/aily-rx/ai-chat-stage1 |
 | 演示地址 | 前端 http://localhost:5173；后端 http://localhost:8080；Dify http://localhost |
-| 版本 tag | `stage1-v1.3`（本次评审修复；`stage1-v1.2`、`stage1-v1.1`、初版 `stage1-v1` 保留） |
+| 版本 tag | `stage1-v1.4`（包含协作人 PR #4 交叉评审记录；`stage1-v1.3`、`stage1-v1.2`、`stage1-v1.1`、初版 `stage1-v1` 保留） |
 
 ## 一、本周期硬性检查项自测
 

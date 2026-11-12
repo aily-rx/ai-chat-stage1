@@ -76,7 +76,7 @@
 | 链接 | https://github.com/aily-rx/ai-chat-stage1/pull/5 |
 | 源分支 | `chore/s1-final-closeout` |
 | 目标分支 | `main` |
-| 状态 | 已合并；合并后建立 tag `stage1-v1.1`（后续由 `stage1-v1.3` 取代为最终交付） |
+| 状态 | 已合并；合并后建立 tag `stage1-v1.1`（后续由 `stage1-v1.4` 取代为最终交付） |
 | 评审方式 | 单人仓库，按发布清单自检；无第二评审人 |
 
 主要变更：新增仅开发源可用的 CORS 配置及正反两个预检用例；同步测试数、接口文档、汇报单和 Dify 记录；补充 Dify 重启后 Web App 通道复测样例。最终测试总数 28，`npm run build` 成功。
@@ -125,6 +125,8 @@ PR #1 合并后，`zhongBY526` 补充 3 条行内评审意见，已在 `9ae78fb`
 - [评论 2：卸载清理](https://github.com/zhongBY526/-/pull/4#discussion_r4548385507)
 - [评论 3：finishReason 语义](https://github.com/zhongBY526/-/pull/4#discussion_r4548385508)
 
+该记录已纳入 `stage1-v1.4` 交付 tag。
+
 ## 回归验证
 
 - `mvn -f backend/pom.xml test`：34 个测试，0 失败（2026-11-12 补充评审修复后复测）。
@@ -138,4 +140,5 @@ PR #1 合并后，`zhongBY526` 补充 3 条行内评审意见，已在 `9ae78fb`
 - PR #1 合并后建立初始里程碑 tag `stage1-v1`（commit `1c96bb3`）。
 - PR #2–#4 已依次合并到 `main`；PR #5 完成阶段性收口并建立 tag `stage1-v1.1`。
 - README 重构后建立 tag `stage1-v1.2`（commit `235ff63`）。
-- 2026-11-12 在 `main` 处理 PR #1 协作评审意见（commit `9ae78fb`），随后建立最终交付 tag `stage1-v1.3`；最终交付以 `stage1-v1.3` 指向的 commit 为准。
+- 2026-11-12 在 `main` 处理 PR #1 协作评审意见（commit `9ae78fb`），随后建立 tag `stage1-v1.3` 作为修复后代码快照。
+- 补充协作人 PR #4 交叉评审记录后，建立最终交付 tag `stage1-v1.4`；最终交付以 `stage1-v1.4` 指向的 commit 为准。
