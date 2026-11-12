@@ -4,10 +4,10 @@
 
 | 项目 | 内容 |
 |---|---|
-| GitHub（私有） | https://github.com/aily-rx/ai-chat-stage1 |
-| 最终交付 tag | `stage1-v1.2`（`stage1-v1.1`、初始里程碑 `stage1-v1` 保留） |
+| GitHub | https://github.com/aily-rx/ai-chat-stage1 |
+| 最终交付 tag | `stage1-v1.3`（`stage1-v1.2`、`stage1-v1.1`、初始里程碑 `stage1-v1` 保留） |
 | 主链路 | Vue3（5173）→ Spring Boot（8080）→ DeepSeek API |
-| 交付状态 | S0–S8 已完成；PR [#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)–[#5](https://github.com/aily-rx/ai-chat-stage1/pull/5) 已合并 |
+| 交付状态 | S0–S8 已完成；PR [#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)–[#5](https://github.com/aily-rx/ai-chat-stage1/pull/5) 已合并；协作评审意见已处理 |
 
 ## 一、功能与请求链路
 
@@ -192,7 +192,7 @@ git grep -nE 'sk-[A-Za-z0-9]{20,}' || echo "no real key in tracked files"
 ### 6.1 获取代码
 
 ```bash
-git clone --branch stage1-v1.2 --depth 1 https://github.com/aily-rx/ai-chat-stage1.git
+git clone --branch stage1-v1.3 --depth 1 https://github.com/aily-rx/ai-chat-stage1.git
 cd ai-chat-stage1
 ```
 
@@ -200,7 +200,7 @@ cd ai-chat-stage1
 
 ```bash
 git fetch --tags
-git checkout stage1-v1.2
+git checkout stage1-v1.3
 ```
 
 ### 6.2 启动后端

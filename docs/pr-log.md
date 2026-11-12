@@ -9,8 +9,8 @@
 | 源分支 | `feat/s1-project-skeleton` |
 | 目标分支 | `main` |
 | 状态 | 已合并；合并 commit `1c96bb3`，随后打初始 tag `stage1-v1` |
-| 评审人 | aily（单人仓库，按交叉评审清单自检；如后续有同伴可补充对方 PR 互评） |
-| 评审时间 | 2026-11-11 |
+| 评审人 | aily（自检）；zhongBY526（合并后补充 3 条行内评审意见） |
+| 评审时间 | 2026-11-11（自检）；2026-11-12（协作人补充） |
 
 ## 三条可执行评审意见与处理
 
@@ -76,14 +76,32 @@
 | 链接 | https://github.com/aily-rx/ai-chat-stage1/pull/5 |
 | 源分支 | `chore/s1-final-closeout` |
 | 目标分支 | `main` |
-| 状态 | 已合并；合并后建立最终交付 tag `stage1-v1.1` |
+| 状态 | 已合并；合并后建立 tag `stage1-v1.1`（后续由 `stage1-v1.3` 取代为最终交付） |
 | 评审方式 | 单人仓库，按发布清单自检；无第二评审人 |
 
 主要变更：新增仅开发源可用的 CORS 配置及正反两个预检用例；同步测试数、接口文档、汇报单和 Dify 记录；补充 Dify 重启后 Web App 通道复测样例。最终测试总数 28，`npm run build` 成功。
 
+## 协作人补充评审（PR #1，2026-11-12）
+
+PR #1 合并后，`zhongBY526` 补充 3 条行内评审意见，已在 `9ae78fb` 处理并逐条回复：
+
+| # | 文件 | 评审意见 | 处理结果 |
+|---|---|---|---|
+| 1 | `backend/src/main/java/com/ailyrx/aichat/llm/LlmClient.java` | 结束判断只认 `done`，DeepSeek 触达 `max_tokens` 时先返回 `finish_reason=length` 再返回 `done`，截断与正常完成无法区分。 | `LlmClient` 检查 `finish_reason`，截断时抛 `LlmOutputTruncatedException`；`ChatService` 返回 `event: error` 和 `code=5001`，不再发送 `done`；非流式抽取同步处理；新增 `LlmClientTest` 和接口截断场景测试。 |
+| 2 | `backend/src/main/java/com/ailyrx/aichat/chat/ChatController.java` | 流式接口未设置 `X-Accel-Buffering: no` 与 `Cache-Control: no-cache, no-transform`，经过 Nginx 或网关时可能一次性输出。 | 已补充两个响应头，并在 `ChatControllerTest` 中断言。 |
+| 3 | `backend/src/main/java/com/ailyrx/aichat/llm/LlmClient.java` | 结构化抽取未设置 `temperature`，模型使用默认采样，稳定性完全依赖提示词。 | 抽取请求固定 `temperature=0.0`，支持 `LLM_EXTRACT_TEMPERATURE` 配置；仅抽取 payload 携带该参数；补充 payload 测试并同步文档。 |
+
+原评论与回复：
+
+- [截断判定](https://github.com/aily-rx/ai-chat-stage1/pull/1#discussion_r4547721711) → [回复](https://github.com/aily-rx/ai-chat-stage1/pull/1#discussion_r4548107324)
+- [SSE 反缓冲](https://github.com/aily-rx/ai-chat-stage1/pull/1#discussion_r4547762749) → [回复](https://github.com/aily-rx/ai-chat-stage1/pull/1#discussion_r4548107724)
+- [抽取温度](https://github.com/aily-rx/ai-chat-stage1/pull/1#discussion_r4547844719) → [回复](https://github.com/aily-rx/ai-chat-stage1/pull/1#discussion_r4548108481)
+
+对应修复提交：`9ae78fb`（`fix(chat): 处理 PR #1 评审意见`）。
+
 ## 回归验证
 
-- `mvn -f backend/pom.xml test`：28 个测试，0 失败（最终收口复测）。
+- `mvn -f backend/pom.xml test`：34 个测试，0 失败（2026-11-12 补充评审修复后复测）。
 - `npm run build`：构建成功，产物正常生成。
 - 干净目录克隆后按 README 启动，健康检查、流式对话、停止生成、结构化抽取均通过。
 - CORS 预检：开发源返回 200，`Access-Control-Allow-Origin` 与 `X-Trace-Id` 暴露头正确；非开发源返回 403。
@@ -92,5 +110,6 @@
 ## 合并与 tag
 
 - PR #1 合并后建立初始里程碑 tag `stage1-v1`（commit `1c96bb3`）。
-- PR #2–#4 已依次合并到 `main`；PR #5 完成最终收口。
-- PR #5 合并后建立最终交付 tag `stage1-v1.1`；初始 tag 保留不动，最终交付以 `stage1-v1.1` 指向的 commit 为准。
+- PR #2–#4 已依次合并到 `main`；PR #5 完成阶段性收口并建立 tag `stage1-v1.1`。
+- README 重构后建立 tag `stage1-v1.2`（commit `235ff63`）。
+- 2026-11-12 在 `main` 处理 PR #1 协作评审意见（commit `9ae78fb`），随后建立最终交付 tag `stage1-v1.3`；最终交付以 `stage1-v1.3` 指向的 commit 为准。

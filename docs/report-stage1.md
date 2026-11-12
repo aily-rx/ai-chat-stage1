@@ -8,7 +8,7 @@
 | 指导教师 | （待填写） |
 | 仓库 | https://github.com/aily-rx/ai-chat-stage1 |
 | 演示地址 | 前端 http://localhost:5173；后端 http://localhost:8080；Dify http://localhost |
-| 版本 tag | `stage1-v1.1`（最终收口；初版 `stage1-v1` 保留） |
+| 版本 tag | `stage1-v1.3`（本次评审修复；`stage1-v1.2`、`stage1-v1.1`、初版 `stage1-v1` 保留） |
 
 ## 一、本周期硬性检查项自测
 
@@ -18,7 +18,7 @@
 
 **可验证证据：**
 
-- 从 GitHub 私有仓库重新 clone 到干净目录，按 README 启动成功；`GET /api/health` 返回 200，响应头带 `X-Trace-Id`。
+- 从 GitHub 仓库重新 clone 到干净目录，按 README 启动成功；`GET /api/health` 返回 200，响应头带 `X-Trace-Id`。
 - 浏览器实测：正式风格首字 0.90 s、总耗时 2.41 s；简洁风格首字 0.65 s、总耗时 1.07 s，均小于 3 秒。
 - 同一问题“介绍一下RAG”切换 `formal` / `concise`：curl 实测输出 420 / 66 字符，风格差异明显。
 - 结构化抽取返回固定五字段；完整样例 `date=2026-11-01`，稀疏样例五个字段均为 `null`；空文本返回 400。
