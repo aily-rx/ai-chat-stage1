@@ -99,6 +99,32 @@ PR #1 合并后，`zhongBY526` 补充 3 条行内评审意见，已在 `9ae78fb`
 
 对应修复提交：`9ae78fb`（`fix(chat): 处理 PR #1 评审意见`）。
 
+## 交叉评审：协作人 PR #4（2026-11-12）
+
+对协作人仓库 `zhongBY526/-` 的 PR #4「首字可感知、流式截断识别与异常日志」提交 `COMMENT` review，未使用 `Approve` / `Request changes`。
+
+| 项目 | 内容 |
+|---|---|
+| 仓库 | https://github.com/zhongBY526/- |
+| PR | https://github.com/zhongBY526/-/pull/4 |
+| 状态 | 已合并/关闭；合并 commit `2d0920b` |
+| 评审身份 | `aily-rx` |
+| 评审方式 | `COMMENT` review，3 条行内意见 |
+| 评审结论 | 无阻塞性功能问题；以下 3 条作为后续迭代建议 |
+
+| # | 文件 | 意见 | 处理建议 |
+|---|---|---|---|
+| 1 | `front/src/views/ChatViews.vue` | `done` / `error` 终态可能被后续读取异常覆盖，导致页面展示二次异常而不是服务端真实错误。 | catch 中增加 `!ended` 判断，保证终态优先。 |
+| 2 | `front/src/views/ChatViews.vue` | `waitTimer` 与未结束的流只在 `send()` 的 finally 清理；切换 tab 卸载组件时可能继续运行。 | 增加 `onBeforeUnmount(() => { stopWaitTimer(); controller?.abort() })`。 |
+| 3 | `backed/src/main/java/com/intern/backed/chat/DeepseekStreamChat.java` | `resp.finishReason() == null` 被映射为 `"stop"`，会把缺失结束原因误报为正常完成。 | null 映射为 `"unknown"` 或保留 null，并补充 null / stop / length 测试。 |
+
+评审与评论链接：
+
+- [评审汇总](https://github.com/zhongBY526/-/pull/4#pullrequestreview-5871804250)
+- [评论 1：终态覆盖](https://github.com/zhongBY526/-/pull/4#discussion_r4548385496)
+- [评论 2：卸载清理](https://github.com/zhongBY526/-/pull/4#discussion_r4548385507)
+- [评论 3：finishReason 语义](https://github.com/zhongBY526/-/pull/4#discussion_r4548385508)
+
 ## 回归验证
 
 - `mvn -f backend/pom.xml test`：34 个测试，0 失败（2026-11-12 补充评审修复后复测）。
