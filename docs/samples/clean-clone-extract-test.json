@@ -1,0 +1,49 @@
+{
+  "valid": [
+    {
+      "case": "full",
+      "http": 200,
+      "elapsed": 1.08,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "docType": "通知",
+          "title": "关于召开2026年第四季度安全生产工作会议的通知",
+          "recipient": "各部门",
+          "signature": "XX公司办公室",
+          "date": "2026-11-10"
+        },
+        "traceId": "1668e3a6"
+      },
+      "trace_header": "1668e3a6"
+    },
+    {
+      "case": "sparse",
+      "http": 200,
+      "elapsed": 0.78,
+      "body": {
+        "code": 0,
+        "message": "ok",
+        "data": {
+          "docType": null,
+          "title": null,
+          "recipient": null,
+          "signature": null,
+          "date": null
+        },
+        "traceId": "c27b9b73"
+      },
+      "trace_header": "c27b9b73"
+    }
+  ],
+  "invalid": {
+    "http": 400,
+    "body": {
+      "code": 4000,
+      "message": "text 不能为空",
+      "data": null,
+      "traceId": "ccf09b70"
+    }
+  }
+}

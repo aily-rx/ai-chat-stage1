@@ -18,7 +18,7 @@
 - [x] S7 文档与样例
 - [x] S8 Dify + PR + 汇报材料
 
-阶段一交付 tag：`stage1-v1`；PR：[#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)。
+阶段一交付 tag：`stage1-v1`；PR：[#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)、[#2](https://github.com/aily-rx/ai-chat-stage1/pull/2)。
 
 ## 环境要求
 
@@ -38,23 +38,22 @@ cp .env.example .env
 
 `.env` 已被 `.gitignore` 忽略，禁止提交真实 Key。
 
-## 前端运行（演示模式）
+## 前端运行
 
 ```bash
 cd frontend
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-默认 `VITE_USE_MOCK=true`，无需后端即可演示流式对话、停止生成、正式/简洁切换和结构化抽取。页面地址：http://localhost:5173（Windows 下建议使用 `localhost`，避免 IPv6 解析差异）。
+默认 `VITE_USE_MOCK=false`，前端通过 Vite 代理访问 `http://localhost:8080/api`，即真实后端链路。页面地址：http://localhost:5173（Windows 下建议使用 `localhost`，避免 IPv6 解析差异）。
 
-真实联调时，将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `false`，即可通过 Vite 代理访问 `http://localhost:8080/api`：
+如需在**无后端**时演示流式对话、停止生成、正式/简洁切换和结构化抽取（含 `[[error]]` / `[[fail]]` 失败样例），将 `frontend/.env` 中的 `VITE_USE_MOCK` 改为 `true` 并重启 Vite：
 
 ```bash
-cd frontend
-cp .env.example .env
-# 将 VITE_USE_MOCK=true 改为 false
-npm run dev
+# 演示模式（无需后端；默认值为 false）
+VITE_USE_MOCK=true
 ```
 
 ## 后端运行
