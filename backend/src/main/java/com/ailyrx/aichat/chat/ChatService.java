@@ -3,6 +3,7 @@ package com.ailyrx.aichat.chat;
 import com.ailyrx.aichat.common.ErrorCodes;
 import com.ailyrx.aichat.llm.LlmClient;
 import com.ailyrx.aichat.prompt.PromptService;
+import com.ailyrx.aichat.prompt.PromptTemplate;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,9 +35,9 @@ public class ChatService {
         AtomicInteger characterCount = new AtomicInteger();
 
         try {
-            String systemPrompt = promptService.buildChatPrompt(style);
+            PromptTemplate prompt = promptService.chatPrompt(style);
             llmClient.streamChat(
-                    systemPrompt,
+                    prompt.content(),
                     message,
                     delta -> {
                         characterCount.addAndGet(delta.length());
@@ -49,7 +50,8 @@ public class ChatService {
                 return;
             }
 
-            log.info("chat stream completed traceId={} chars={}", traceId, characterCount.get());
+            log.info("chat stream completed traceId={} chars={} promptId={} promptVersion={}",
+                    traceId, characterCount.get(), prompt.id(), prompt.version());
             sendEvent(emitter, SseEmitter.event()
                     .name("done")
                     .data(Map.of("traceId", traceId)), closed);
