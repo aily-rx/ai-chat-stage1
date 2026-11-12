@@ -1,6 +1,8 @@
 package com.ailyrx.aichat.extract;
 
 import com.ailyrx.aichat.llm.LlmClient;
+import com.ailyrx.aichat.prompt.PromptService;
+import com.ailyrx.aichat.prompt.PromptTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.DateTimeException;
@@ -25,38 +27,32 @@ public class ExtractionService {
     private static final Pattern CHINESE_DATE =
             Pattern.compile("([0-9]{4})年([0-9]{1,2})月([0-9]{1,2})日");
 
-    private static final String EXTRACT_PROMPT = """
-            你是公文信息抽取器。请从用户提供的公文文本中抽取指定字段。
-            只输出一个 JSON 对象，不要输出 Markdown 围栏、解释文字或任何额外内容。
-            JSON 结构必须为：
-            {"docType":"文种或 null","title":"标题或 null","recipient":"主送单位或 null","signature":"落款单位或个人或 null","date":"成文日期或 null"}
-            规则：
-            1. 五个字段必须全部输出，无法识别的字段填 null；
-            2. 不要编造不存在的单位、人员或日期；
-            3. date 必须统一为 YYYY-MM-DD；无法确定为 null。
-            """;
-
     private final LlmClient llmClient;
     private final ObjectMapper objectMapper;
+    private final PromptService promptService;
 
-    public ExtractionService(LlmClient llmClient, ObjectMapper objectMapper) {
+    public ExtractionService(LlmClient llmClient, ObjectMapper objectMapper, PromptService promptService) {
         this.llmClient = llmClient;
         this.objectMapper = objectMapper;
+        this.promptService = promptService;
     }
 
     public ExtractResult extract(String text, String traceId) {
+        PromptTemplate prompt = promptService.extractPrompt();
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
-            String raw = llmClient.complete(EXTRACT_PROMPT, text, traceId);
+            String raw = llmClient.complete(prompt.content(), text, traceId);
             try {
                 ExtractResult result = parse(raw, traceId);
                 if (result != null) {
+                    log.info("extract completed traceId={} promptId={} promptVersion={}",
+                            traceId, prompt.id(), prompt.version());
                     return result;
                 }
-                log.warn("extract output invalid traceId={} attempt={} raw={}",
-                        traceId, attempt, truncate(raw));
+                log.warn("extract output invalid traceId={} attempt={} promptId={} promptVersion={} raw={}",
+                        traceId, attempt, prompt.id(), prompt.version(), truncate(raw));
             } catch (Exception exception) {
-                log.warn("extract output parse failed traceId={} attempt={} raw={}",
-                        traceId, attempt, truncate(raw), exception);
+                log.warn("extract output parse failed traceId={} attempt={} promptId={} promptVersion={} raw={}",
+                        traceId, attempt, prompt.id(), prompt.version(), truncate(raw), exception);
             }
         }
 

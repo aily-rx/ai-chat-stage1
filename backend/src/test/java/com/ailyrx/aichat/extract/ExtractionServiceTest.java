@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.ailyrx.aichat.llm.LlmClient;
 import com.ailyrx.aichat.llm.LlmException;
+import com.ailyrx.aichat.prompt.PromptService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class ExtractionServiceTest {
 
     @BeforeEach
     void setUp() {
-        extractionService = new ExtractionService(llmClient, new ObjectMapper());
+        extractionService = new ExtractionService(llmClient, new ObjectMapper(), new PromptService());
     }
 
     @Test
