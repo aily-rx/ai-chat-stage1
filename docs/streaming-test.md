@@ -2,7 +2,7 @@
 
 | 项目 | 内容 |
 |---|---|
-| 测试日期 | 2026-11-11；2026-11-12 Prompt 版本化与长内容验收复测 |
+| 测试日期 | 2026-11-11；2026-11-12 Prompt 版本化、长内容验收与最终收口复测 |
 | 测试环境 | Windows 11、JDK 17.0.8、Spring Boot 3.3.5、Node.js 24.18.0、Vite 8.3.8 |
 | 模型 | DeepSeek `deepseek-chat`（OpenAI 兼容接口） |
 | 测试链路 | Chrome → Vue3（5173）→ Vite 代理 → Spring Boot（8080）→ DeepSeek |
@@ -96,6 +96,7 @@ RAG（检索增强生成）指先从知识库检索相关内容，再交由大�
 | 模型调用失败 | SSE `event:error`，`code=5001` | 集成测试模拟上游异常，不泄露堆栈和 Key |
 | 前端演示模式输入 `[[error]]` | SSE `event:error`，`code=5001` | 用于无网络时演示异常态 |
 | 用户点击停止 | 前端状态 `stopped`，无错误事件 | 不展示为失败 |
+| 非开发源 CORS 预检 | HTTP 403 | `Origin: http://evil.example` 被拒绝 |
 
 所有非流式错误响应均保留统一结构：`code / message / data / traceId`。
 
@@ -174,13 +175,13 @@ mvn -f backend/pom.xml test
 | 测试类 | 用例数 | 结果 |
 |---|---|---|
 | `HealthControllerTest` | 2 | 通过 |
-| `ChatControllerTest` | 5 | 通过 |
+| `ChatControllerTest` | 7 | 通过 |
 | `ExtractionServiceTest` | 9 | 通过 |
 | `ExtractControllerTest` | 5 | 通过 |
 | `PromptServiceTest` | 5 | 通过 |
-| **合计** | **26** | **全部通过** |
+| **合计** | **28** | **全部通过** |
 
-说明：2026-11-12 完成 Prompt 外置与版本化后复测，`PromptServiceTest` 从 1 个用例扩展为 5 个，覆盖风格差异、稳定 ID/版本、变量替换、抽取字段契约和非法风格；`ExtractControllerTest` 新增 10001 字符边界用例，从 4 个扩展为 5 个。
+说明：2026-11-12 完成 Prompt 外置与版本化后复测，`PromptServiceTest` 从 1 个用例扩展为 5 个，覆盖风格差异、稳定 ID/版本、变量替换、抽取字段契约和非法风格；`ExtractControllerTest` 新增 10001 字符边界用例，从 4 个扩展为 5 个。最终收口时新增两个 CORS 预检用例，`ChatControllerTest` 从 5 个扩展为 7 个，验证开发源可跨域且 `X-Trace-Id` 可被前端读取、非开发源返回 403。
 
 ## 八、结论
 
@@ -190,4 +191,5 @@ mvn -f backend/pom.xml test
 - 结构化抽取五个固定字段可正常返回，解析失败重试与 `5003` 兜底已覆盖。
 - 9367 字符长文本抽取五字段正确；10001 字符输入按约定返回 HTTP 400 与 `code=4000`。
 - 前端默认连接真实后端（`VITE_USE_MOCK=false`）；需要无后端演示时，将 `frontend/.env` 的 `VITE_USE_MOCK` 显式设为 `true`。
+- 后端 CORS 仅允许 `http://localhost:5173` 和 `http://127.0.0.1:5173`，开发源预检返回 200 并暴露 `X-Trace-Id`，非开发源预检返回 403。
 - Dify 1.19.0 作为独立交付物，不参与本链路；其启动和 Chatbot 测试单独记录。
