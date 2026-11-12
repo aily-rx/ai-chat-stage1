@@ -1,0 +1,41 @@
+{
+  "tested_at": "2026-11-12",
+  "dify_version": "1.19.0",
+  "app_name": "公文问答助手",
+  "app_mode": "chat",
+  "model": "deepseek-flash",
+  "access_path": "webapp passport: X-App-Code + X-App-Passport",
+  "note": "passport token not recorded",
+  "results": [
+    {
+      "question": "通知的主要用途是什么？请用一句话回答。",
+      "http_status": 200,
+      "elapsed_s": 1.579,
+      "mode": "chat",
+      "answer_chars": 44,
+      "answer_excerpt": "通知主要用于发布、传达要求下级机关执行和有关单位周知或者执行的事项，以及批转、转发公文。",
+      "conversation_id_present": true,
+      "message_id_present": true
+    },
+    {
+      "question": "请示和报告有什么区别？请分两点回答。",
+      "http_status": 200,
+      "elapsed_s": 2.75,
+      "mode": "chat",
+      "answer_chars": 182,
+      "answer_excerpt": "请示与报告主要有两点区别：\n\n1. **行文目的不同**：请示用于向上级机关请求指示、批准，需要上级明确答复；报告用于向上级机关汇报工作、反映情况、答复询问或提出建议，一般不要求上级答复。\n\n2. **行文规则不同**：请示应当事前行文，做到一文一事，明确请示事项，不得多头主送或抄送下级机关；报告可事前、事中或事后行文，但不得在报告中夹带请示事项，以免贻误办理。",
+      "conversation_id_present": true,
+      "message_id_present": true
+    },
+    {
+      "question": "请为“召开第四季度安全生产工作会议”拟一句会议通知开头。",
+      "http_status": 200,
+      "elapsed_s": 2.437,
+      "mode": "chat",
+      "answer_chars": 256,
+      "answer_excerpt": "**推荐开头（一句话）：**\n\n为深入贯彻落实上级关于安全生产工作的决策部署，总结前三季度安全生产工作、分析当前形势，安排部署第四季度安全生产重点任务，经研究，决定召开第四季度安全生产工作会议，现将有关事项通知如下：\n\n**备选（更简版）：**\n\n为进一步压实安全生产责任，切实做好第四季度安全生产各项工作，经研究，决定召开第四季度安全生产工作会议，现将有关事项通知如下：\n\n如需加上时间、地点、参会人员等要素，可在“现将有关事项通知如下”后按“会议时间—会议地点—参会人员—会议内容—有关要求”的顺序分条列出。",
+      "conversation_id_present": true,
+      "message_id_present": true
+    }
+  ]
+}

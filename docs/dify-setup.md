@@ -13,7 +13,7 @@
 | 启动命令 | `docker compose up -d`（在 Compose 目录执行） |
 | 停止命令 | `docker compose down` |
 | 访问地址 | http://localhost/（nginx 映射 80 端口） |
-| 当前状态 | 2026-11-11：已启动，15 个容器运行中，`/console/api/setup` 返回 `finished` |
+| 当前状态 | 2026-11-12：已重新启动，15 个容器运行中，`api` 容器 `healthy`，`/console/api/setup` 返回 `finished` |
 | 模型供应商 | DeepSeek（Dify 插件 `langgenius/deepseek/deepseek`） |
 | 演示用模型 | `deepseek-flash` |
 | Chatbot 名称 | 公文问答助手 |
@@ -68,6 +68,23 @@ docker exec docker-api-1 sh -c "grep -m1 '^version' /app/api/pyproject.toml"
 - Dify 1.19.0 本地部署可用，Chatbot 能正常调用 DeepSeek 模型完成业务问答。
 - 回答内容符合公文场景，能够支撑第一周成果演示。
 - Chatbot 属于独立交付物，不参与前端 → 后端 → DeepSeek 的主链路。
+
+## 重启后复测（2026-11-12）
+
+Docker Desktop、WSL 与 Dify 重启后复核：15 个容器运行，`docker-api-1` 健康状态为 `healthy`，Chatbot 应用与模型配置均持久化。通过 Web App 通道调用：
+
+- `GET /api/passport` 携带 `X-App-Code` 获取临时访问票据；
+- `POST /api/chat-messages` 携带 `X-App-Code` 与 `X-App-Passport`，`response_mode=blocking`。
+
+访问票据只保存在测试进程内，未写入文档或样例。三个业务问题均返回 HTTP 200：
+
+| # | 提问 | HTTP | 耗时 | 回答字符数 | 结果摘要 |
+|---|---|---|---|---|---|
+| 1 | 通知的主要用途是什么？请用一句话回答。 | 200 | 1.58 s | 44 | 给出通知用于发布、传达、周知和执行事项的定义 |
+| 2 | 请示和报告有什么区别？请分两点回答。 | 200 | 2.75 s | 182 | 从行文目的和行文规则两方面区分请示与报告 |
+| 3 | 请为“召开第四季度安全生产工作会议”拟一句会议通知开头。 | 200 | 2.44 s | 256 | 给出推荐开头与更简备选，符合会议通知语体 |
+
+完整问题与回答节选见 `docs/samples/dify-chat-smoke.json`。
 
 ## 常见问题
 

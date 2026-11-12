@@ -8,7 +8,7 @@
 | 指导教师 | （待填写） |
 | 仓库 | https://github.com/aily-rx/ai-chat-stage1 |
 | 演示地址 | 前端 http://localhost:5173；后端 http://localhost:8080；Dify http://localhost |
-| 版本 tag | `stage1-v1` |
+| 版本 tag | `stage1-v1.1`（最终收口；初版 `stage1-v1` 保留） |
 
 ## 一、本周期硬性检查项自测
 
@@ -24,17 +24,18 @@
 - 结构化抽取返回固定五字段；完整样例 `date=2026-11-01`，稀疏样例五个字段均为 `null`；空文本返回 400。
 - 长回答实测输出 2102 字符，收到 `done`，代码块闭合且末尾标记完整，未发生截断。
 - 9367 字符长文本抽取五字段正确；10001 字符输入返回 HTTP 400、`code=4000`。
-- `mvn test`：26 个测试全部通过；`npm run build` 构建成功。
+- `mvn test`：28 个测试全部通过；`npm run build` 构建成功。
+- CORS 预检请求从 `http://localhost:5173` 发起返回 200，响应包含 `Access-Control-Allow-Origin` 与 `Access-Control-Expose-Headers: X-Trace-Id`；非开发源返回 403。
 
 ## 二、本周期完成内容
 
-1. **后端主链路**：Spring Boot 3.3.5 + JDK 17，完成 `/api/health`、`/api/chat/stream`（SSE）和 `/api/extract`；统一 `ApiResponse`、参数校验、全局异常、traceId 过滤器和异步线程 MDC 透传。
+1. **后端主链路**：Spring Boot 3.3.5 + JDK 17，完成 `/api/health`、`/api/chat/stream`（SSE）和 `/api/extract`；统一 `ApiResponse`、参数校验、全局异常、traceId 过滤器、异步线程 MDC 透传和仅开发源的 CORS 配置。
 2. **流式对话**：基于 Java 17 `HttpClient` 调用 DeepSeek OpenAI 兼容接口，逐行解析上游 SSE；后端以 `SseEmitter` 转发，前端用 `fetch + ReadableStream` 渲染，支持停止生成和错误提示。
 3. **Prompt 变量**：`formal` / `concise` 两套风格模板，前端可切换；同一问题实测输出长度和语气明显不同。
 4. **结构化抽取**：固定 `docType/title/recipient/signature/date` 五字段；去除 Markdown 围栏、提取 JSON、日期归一化、解析失败重试 1 次、仍失败返回 `5003`，模型调用失败返回 `5001`。
 5. **前端页面**：流式对话、Markdown 渲染 + DOMPurify、首字/总耗时/traceId 展示、结构化抽取结果表格与原始 JSON、失败样例、Mock 演示模式。
-6. **工程化与文档**：26 个后端测试、接口文档、前端原型文档、联调性能记录、Dify 部署记录、3 个 Prompt 样例、开发笔记、PR 记录。
-7. **Dify 独立交付物**：本地 Dify 1.19.0 启动成功，创建 Chatbot「公文问答助手」，完成 3 个业务问答测试；未接入主链路。
+6. **工程化与文档**：28 个后端测试、接口文档、前端原型文档、联调性能记录、Dify 部署记录、3 个 Prompt 样例、开发笔记、PR 记录。
+7. **Dify 独立交付物**：本地 Dify 1.19.0 启动成功，创建 Chatbot「公文问答助手」；2026-11-11 控制台测试完成 3 个业务问答，2026-11-12 重启后通过 Web App 通道复测 3 个问题均返回 200；未接入主链路。
 
 ## 三、现场演示清单
 

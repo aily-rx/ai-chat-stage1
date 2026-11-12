@@ -18,7 +18,7 @@
 - [x] S7 文档与样例
 - [x] S8 Dify + PR + 汇报材料
 
-阶段一交付 tag：`stage1-v1`；PR：[#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)、[#2](https://github.com/aily-rx/ai-chat-stage1/pull/2)。
+阶段一最终交付 tag：`stage1-v1.1`（初始里程碑 `stage1-v1` 保留）；PR：[#1](https://github.com/aily-rx/ai-chat-stage1/pull/1)、[#2](https://github.com/aily-rx/ai-chat-stage1/pull/2)、[#3](https://github.com/aily-rx/ai-chat-stage1/pull/3)、[#4](https://github.com/aily-rx/ai-chat-stage1/pull/4)。
 
 ## 环境要求
 
