@@ -32,7 +32,7 @@
 | 流式请求 | `fetch` + `ReadableStream` | 接口是 POST，`EventSource` 不支持 |
 | 停止生成 | `AbortController` | 用户可中断流式请求 |
 | 抽取页面 | 纳入本期前端 | 第 1 次汇报需要现场演示 |
-| 原型模式 | 默认 `VITE_USE_MOCK=true` | 后端未完成时也能评审界面和交互 |
+| 演示模式 | 显式设置 `VITE_USE_MOCK=true`（默认 `false`） | 后端未完成或无网络时可评审界面和交互 |
 | 接口基址 | 默认 `/api`，Vite 代理到 8080 | 开发环境避免 CORS |
 
 ## 三、整体布局
@@ -311,7 +311,7 @@ frontend/
 
 ## 八、演示模式
 
-默认在 `frontend/.env` 设置：
+默认 `VITE_USE_MOCK=false`，连接真实后端。需要演示模式时，在 `frontend/.env` 显式开启：
 
 ```bash
 VITE_API_BASE_URL=/api
@@ -327,7 +327,7 @@ VITE_USE_MOCK=true
 - 抽取页对正常文本返回固定字段；包含 `[[fail]]` 的文本返回 `5003`。
 - 停止按钮可以中断模拟流，保留已生成内容。
 
-联调真实后端时改为：
+联调真实后端时改回默认值：
 
 ```bash
 VITE_USE_MOCK=false
@@ -398,7 +398,7 @@ server: {
 4. 实现演示模式流式输出、停止和首字计时。
 5. 实现抽取页、结果组件和失败样例。
 6. 运行 `npm run build` 和浏览器手动验收。
-7. 后端 S2 完成后，将 `VITE_USE_MOCK` 改为 `false` 联调。
+7. 后端 S2 完成后，将 `VITE_USE_MOCK` 改回默认值 `false` 联调。
 8. 记录首字耗时、异常和验收结果。
 
 ## 十三、本期不做

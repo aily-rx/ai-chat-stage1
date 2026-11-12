@@ -2,7 +2,7 @@
 
 | 项目 | 内容 |
 |---|---|
-| 测试日期 | 2026-11-11 |
+| 测试日期 | 2026-11-11；2026-11-12 Prompt 版本化后复测 |
 | 测试环境 | Windows 11、JDK 17.0.8、Spring Boot 3.3.5、Node.js 24.18.0、Vite 8.3.8 |
 | 模型 | DeepSeek `deepseek-chat`（OpenAI 兼容接口） |
 | 测试链路 | Chrome → Vue3（5173）→ Vite 代理 → Spring Boot（8080）→ DeepSeek |
@@ -133,13 +133,15 @@ mvn -f backend/pom.xml test
 | `ChatControllerTest` | 5 | 通过 |
 | `ExtractionServiceTest` | 9 | 通过 |
 | `ExtractControllerTest` | 4 | 通过 |
-| `PromptServiceTest` | 1 | 通过 |
-| **合计** | **21** | **全部通过** |
+| `PromptServiceTest` | 5 | 通过 |
+| **合计** | **25** | **全部通过** |
+
+说明：2026-11-12 完成 Prompt 外置与版本化后复测，`PromptServiceTest` 从 1 个用例扩展为 5 个，覆盖风格差异、稳定 ID/版本、变量替换、抽取字段契约和非法风格。
 
 ## 七、结论
 
 - SSE 流式对话、停止生成、正式/简洁风格切换均通过真实 DeepSeek 联调。
 - 首字延迟最大 1.27 s，满足 ≤3 s 的验收要求。
 - 结构化抽取五个固定字段可正常返回，解析失败重试与 `5003` 兜底已覆盖。
-- 前端默认为演示模式，便于无后端时展示；真实联调时将 `frontend/.env` 的 `VITE_USE_MOCK` 改为 `false`。
+- 前端默认连接真实后端（`VITE_USE_MOCK=false`）；需要无后端演示时，将 `frontend/.env` 的 `VITE_USE_MOCK` 显式设为 `true`。
 - Dify 1.19.0 作为独立交付物，不参与本链路；其启动和 Chatbot 测试单独记录。

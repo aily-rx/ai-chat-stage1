@@ -29,7 +29,7 @@ cp .env.example .env
 ```bash
 cd frontend
 cp .env.example .env
-# 将 VITE_USE_MOCK=true 改为 false
+# 确认 VITE_USE_MOCK=false（默认值，连接真实后端）
 npm install
 ```
 
