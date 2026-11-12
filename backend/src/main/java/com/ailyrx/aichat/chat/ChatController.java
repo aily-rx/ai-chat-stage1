@@ -1,6 +1,7 @@
 package com.ailyrx.aichat.chat;
 
 import com.ailyrx.aichat.config.TraceIdFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +32,11 @@ public class ChatController {
     @PostMapping(value = "/stream", produces = "text/event-stream;charset=UTF-8")
     public SseEmitter stream(
             @Valid @RequestBody ChatRequest request,
-            @RequestAttribute(TraceIdFilter.TRACE_ID_ATTRIBUTE) String traceId) {
+            @RequestAttribute(TraceIdFilter.TRACE_ID_ATTRIBUTE) String traceId,
+            HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-transform");
+        response.setHeader("X-Accel-Buffering", "no");
+
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MILLIS);
         AtomicBoolean closed = new AtomicBoolean(false);
 

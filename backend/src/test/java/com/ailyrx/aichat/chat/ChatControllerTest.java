@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ailyrx.aichat.llm.LlmClient;
 import com.ailyrx.aichat.llm.LlmException;
+import com.ailyrx.aichat.llm.LlmOutputTruncatedException;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import org.assertj.core.api.Assertions;
@@ -55,6 +56,8 @@ class ChatControllerTest {
         MvcResult dispatched = mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-Trace-Id"))
+                .andExpect(header().string("Cache-Control", "no-cache, no-transform"))
+                .andExpect(header().string("X-Accel-Buffering", "no"))
                 .andReturn();
 
         String body = dispatched.getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -87,6 +90,30 @@ class ChatControllerTest {
                 .contains("event:error")
                 .contains("\"code\":5001")
                 .contains("模型调用失败");
+    }
+
+    @Test
+    void sendsTruncationErrorEventWhenOutputHitsLengthLimit() throws Exception {
+        doThrow(new LlmOutputTruncatedException("模型输出达到长度上限"))
+                .when(llmClient).streamChat(anyString(), anyString(), any(), any(), anyString());
+
+        MvcResult result = mockMvc.perform(post("/api/chat/stream")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"message\":\"写一份长通知\",\"style\":\"formal\"}"))
+                .andExpect(status().isOk())
+                .andExpect(request().asyncStarted())
+                .andReturn();
+
+        MvcResult dispatched = mockMvc.perform(asyncDispatch(result))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String body = dispatched.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        Assertions.assertThat(body)
+                .contains("event:error")
+                .contains("\"code\":5001")
+                .contains("模型输出被截断")
+                .doesNotContain("event:done");
     }
 
     @Test

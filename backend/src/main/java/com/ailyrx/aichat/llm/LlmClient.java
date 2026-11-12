@@ -54,7 +54,7 @@ public class LlmClient {
 
         HttpRequest request;
         try {
-            request = buildRequest(systemPrompt, userMessage, true);
+            request = buildRequest(systemPrompt, userMessage, true, null);
         } catch (IOException exception) {
             throw new LlmException("构造模型请求失败", exception);
         }
@@ -89,7 +89,7 @@ public class LlmClient {
 
         HttpRequest request;
         try {
-            request = buildRequest(systemPrompt, userMessage, false);
+            request = buildRequest(systemPrompt, userMessage, false, properties.extractTemperature());
         } catch (IOException exception) {
             throw new LlmException("构造模型请求失败", exception);
         }
@@ -112,7 +112,17 @@ public class LlmClient {
                 throw new LlmException("上游模型返回错误响应");
             }
 
-            JsonNode content = root.path("choices").path(0).path("message").path("content");
+            JsonNode choices = root.path("choices");
+            if (!choices.isArray() || choices.isEmpty()) {
+                throw new LlmException("模型返回内容为空");
+            }
+
+            JsonNode choice = choices.path(0);
+            if ("length".equals(choice.path("finish_reason").asText())) {
+                throw new LlmOutputTruncatedException("模型输出达到长度上限");
+            }
+
+            JsonNode content = choice.path("message").path("content");
             if (!content.isTextual() || content.asText().isBlank()) {
                 throw new LlmException("模型返回内容为空");
             }
@@ -131,18 +141,12 @@ public class LlmClient {
         }
     }
 
-    private HttpRequest buildRequest(String systemPrompt, String userMessage, boolean stream) throws IOException {
-        ObjectNode payload = objectMapper.createObjectNode();
-        payload.put("model", properties.model());
-        payload.put("stream", stream);
-
-        ArrayNode messages = payload.putArray("messages");
-        messages.addObject()
-                .put("role", "system")
-                .put("content", systemPrompt);
-        messages.addObject()
-                .put("role", "user")
-                .put("content", userMessage);
+    private HttpRequest buildRequest(
+            String systemPrompt,
+            String userMessage,
+            boolean stream,
+            Double temperature) throws IOException {
+        ObjectNode payload = buildPayload(systemPrompt, userMessage, stream, temperature);
 
         int timeoutSeconds = properties.timeoutSeconds() > 0 ? properties.timeoutSeconds() : 60;
 
@@ -159,6 +163,29 @@ public class LlmClient {
         return builder.build();
     }
 
+    ObjectNode buildPayload(
+            String systemPrompt,
+            String userMessage,
+            boolean stream,
+            Double temperature) {
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("model", properties.model());
+        payload.put("stream", stream);
+
+        if (temperature != null) {
+            payload.put("temperature", temperature.doubleValue());
+        }
+
+        ArrayNode messages = payload.putArray("messages");
+        messages.addObject()
+                .put("role", "system")
+                .put("content", systemPrompt);
+        messages.addObject()
+                .put("role", "user")
+                .put("content", userMessage);
+        return payload;
+    }
+
     private URI buildEndpoint() {
         String baseUrl = properties.baseUrl() == null ? "" : properties.baseUrl().trim();
         while (baseUrl.endsWith("/")) {
@@ -167,7 +194,7 @@ public class LlmClient {
         return URI.create(baseUrl + "/chat/completions");
     }
 
-    private void consume(
+    void consume(
             InputStream body,
             Consumer<String> onDelta,
             BooleanSupplier cancelled) throws IOException {
@@ -206,9 +233,22 @@ public class LlmClient {
                     continue;
                 }
 
-                JsonNode content = choices.path(0).path("delta").path("content");
+                JsonNode choice = choices.path(0);
+                JsonNode content = choice.path("delta").path("content");
                 if (content.isTextual() && !content.asText().isEmpty()) {
                     onDelta.accept(content.asText());
+                }
+
+                JsonNode finishReason = choice.path("finish_reason");
+                if (finishReason.isTextual()) {
+                    String reason = finishReason.asText();
+                    if ("length".equals(reason)) {
+                        throw new LlmOutputTruncatedException("模型输出达到长度上限");
+                    }
+                    if (!"stop".equals(reason)) {
+                        throw new LlmException("模型输出异常结束: " + reason);
+                    }
+                    completed = true;
                 }
             }
         }

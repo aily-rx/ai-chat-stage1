@@ -65,7 +65,7 @@ JSON 结构必须为：
 |---|---|---|
 | `model` | `deepseek-chat` | 可通过 `LLM_MODEL` 覆盖 |
 | `stream` | `false` | 抽取使用非流式 `complete` 调用 |
-| `temperature` | 未显式设置 | 使用 API 默认值 |
+| `temperature` | `0.0` | 由 `LLM_EXTRACT_TEMPERATURE` 控制，降低 JSON 输出随机性 |
 | `max_tokens` | 未显式设置 | 使用模型默认值 |
 | 非流式总超时 | 60 s | 由 `LLM_TIMEOUT_SECONDS` 控制 |
 | 解析重试 | 最多 2 次 | 第一次无法解析时重新请求一次 |

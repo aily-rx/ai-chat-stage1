@@ -134,6 +134,9 @@ LLM_MODEL=deepseek-chat
 
 # 非流式请求/抽取超时时间（秒）
 LLM_TIMEOUT_SECONDS=60
+
+# 结构化抽取温度；0.0 降低随机性，提高 JSON 稳定性
+LLM_EXTRACT_TEMPERATURE=0.0
 ```
 
 | 变量 | 必填 | 默认值 | 说明 |
@@ -143,6 +146,7 @@ LLM_TIMEOUT_SECONDS=60
 | `LLM_API_KEY` | **是** | 无 | DeepSeek Key；未配置时调用会失败 |
 | `LLM_MODEL` | 否 | `deepseek-chat` | 模型名称 |
 | `LLM_TIMEOUT_SECONDS` | 否 | `60` | 模型调用超时时间 |
+| `LLM_EXTRACT_TEMPERATURE` | 否 | `0.0` | 结构化抽取的模型温度，降低随机性 |
 
 后端由 `application.yml` 通过 `optional:file:./.env` 加载配置，因此推荐在**项目根目录**执行启动命令，并确保 `.env` 位于项目根目录。修改 `.env` 后需要重启后端。
 

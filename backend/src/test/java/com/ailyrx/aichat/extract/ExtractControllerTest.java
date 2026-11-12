@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ailyrx.aichat.llm.LlmClient;
 import com.ailyrx.aichat.llm.LlmException;
+import com.ailyrx.aichat.llm.LlmOutputTruncatedException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
@@ -87,6 +88,22 @@ class ExtractControllerTest {
         JsonNode root = readBody(result);
         assertThat(root.path("code").asInt()).isEqualTo(5001);
         assertThat(root.path("message").asText()).isEqualTo("模型调用失败");
+    }
+
+    @Test
+    void returns5001WhenModelOutputIsTruncated() throws Exception {
+        when(llmClient.complete(anyString(), anyString(), anyString()))
+                .thenThrow(new LlmOutputTruncatedException("模型输出达到长度上限"));
+
+        MvcResult result = mockMvc.perform(post("/api/extract")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"text\":\"test document\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode root = readBody(result);
+        assertThat(root.path("code").asInt()).isEqualTo(5001);
+        assertThat(root.path("message").asText()).isEqualTo("模型输出被截断，请缩短输入或重试");
     }
 
     @Test

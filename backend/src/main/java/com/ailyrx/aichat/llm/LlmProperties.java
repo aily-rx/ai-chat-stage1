@@ -7,5 +7,6 @@ public record LlmProperties(
         String baseUrl,
         String apiKey,
         String model,
-        int timeoutSeconds) {
+        int timeoutSeconds,
+        double extractTemperature) {
 }

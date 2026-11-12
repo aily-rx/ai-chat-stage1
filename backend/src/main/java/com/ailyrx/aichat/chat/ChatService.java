@@ -2,6 +2,7 @@ package com.ailyrx.aichat.chat;
 
 import com.ailyrx.aichat.common.ErrorCodes;
 import com.ailyrx.aichat.llm.LlmClient;
+import com.ailyrx.aichat.llm.LlmOutputTruncatedException;
 import com.ailyrx.aichat.prompt.PromptService;
 import com.ailyrx.aichat.prompt.PromptTemplate;
 import java.io.IOException;
@@ -59,6 +60,16 @@ public class ChatService {
         } catch (SseSendException exception) {
             log.debug("client disconnected traceId={}", traceId);
             safeComplete(emitter);
+        } catch (LlmOutputTruncatedException exception) {
+            if (closed.get()) {
+                log.debug("stream already closed traceId={}", traceId);
+                safeComplete(emitter);
+                return;
+            }
+
+            log.warn("chat stream truncated traceId={} reason={}", traceId, exception.getMessage());
+            sendError(emitter, traceId, "模型输出被截断，请缩短问题或重试");
+            safeComplete(emitter);
         } catch (Exception exception) {
             if (closed.get()) {
                 log.debug("stream already closed traceId={}", traceId);
@@ -67,7 +78,7 @@ public class ChatService {
             }
 
             log.error("chat stream failed traceId={}", traceId, exception);
-            sendError(emitter, traceId);
+            sendError(emitter, traceId, "模型调用失败");
             safeComplete(emitter);
         }
     }
@@ -92,13 +103,13 @@ public class ChatService {
         }
     }
 
-    private void sendError(SseEmitter emitter, String traceId) {
+    private void sendError(SseEmitter emitter, String traceId, String message) {
         try {
             emitter.send(SseEmitter.event()
                     .name("error")
                     .data(Map.of(
                             "code", ErrorCodes.MODEL_CALL_FAILED,
-                            "message", "模型调用失败",
+                            "message", message,
                             "traceId", traceId)));
         } catch (IOException | IllegalStateException exception) {
             log.debug("failed to send SSE error traceId={}", traceId);

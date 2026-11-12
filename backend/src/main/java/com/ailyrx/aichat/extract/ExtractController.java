@@ -4,6 +4,7 @@ import com.ailyrx.aichat.common.ApiResponse;
 import com.ailyrx.aichat.common.ErrorCodes;
 import com.ailyrx.aichat.config.TraceIdFilter;
 import com.ailyrx.aichat.llm.LlmException;
+import com.ailyrx.aichat.llm.LlmOutputTruncatedException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,10 @@ public class ExtractController {
                     traceId);
         } catch (ExtractionParseException exception) {
             return ApiResponse.error(ErrorCodes.EXTRACTION_PARSE_FAILED, exception.getMessage(), traceId);
+        } catch (LlmOutputTruncatedException exception) {
+            log.warn("extract model output truncated traceId={} reason={}", traceId, exception.getMessage());
+            return ApiResponse.error(
+                    ErrorCodes.MODEL_CALL_FAILED, "模型输出被截断，请缩短输入或重试", traceId);
         } catch (LlmException exception) {
             log.error("extract model call failed traceId={}", traceId, exception);
             return ApiResponse.error(ErrorCodes.MODEL_CALL_FAILED, "模型调用失败", traceId);

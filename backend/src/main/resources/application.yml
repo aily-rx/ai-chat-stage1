@@ -15,6 +15,7 @@ app:
     api-key: ${LLM_API_KEY:}
     model: ${LLM_MODEL:deepseek-chat}
     timeout-seconds: ${LLM_TIMEOUT_SECONDS:60}
+    extract-temperature: ${LLM_EXTRACT_TEMPERATURE:0.0}
 
 logging:
   pattern:

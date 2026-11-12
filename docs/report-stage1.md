@@ -24,7 +24,7 @@
 - 结构化抽取返回固定五字段；完整样例 `date=2026-11-01`，稀疏样例五个字段均为 `null`；空文本返回 400。
 - 长回答实测输出 2102 字符，收到 `done`，代码块闭合且末尾标记完整，未发生截断。
 - 9367 字符长文本抽取五字段正确；10001 字符输入返回 HTTP 400、`code=4000`。
-- `mvn test`：28 个测试全部通过；`npm run build` 构建成功。
+- `mvn test`：34 个测试全部通过；`npm run build` 构建成功。
 - CORS 预检请求从 `http://localhost:5173` 发起返回 200，响应包含 `Access-Control-Allow-Origin` 与 `Access-Control-Expose-Headers: X-Trace-Id`；非开发源返回 403。
 
 ## 二、本周期完成内容
@@ -34,7 +34,7 @@
 3. **Prompt 变量**：`formal` / `concise` 两套风格模板，前端可切换；同一问题实测输出长度和语气明显不同。
 4. **结构化抽取**：固定 `docType/title/recipient/signature/date` 五字段；去除 Markdown 围栏、提取 JSON、日期归一化、解析失败重试 1 次、仍失败返回 `5003`，模型调用失败返回 `5001`。
 5. **前端页面**：流式对话、Markdown 渲染 + DOMPurify、首字/总耗时/traceId 展示、结构化抽取结果表格与原始 JSON、失败样例、Mock 演示模式。
-6. **工程化与文档**：28 个后端测试、接口文档、前端原型文档、联调性能记录、Dify 部署记录、3 个 Prompt 样例、开发笔记、PR 记录。
+6. **工程化与文档**：34 个后端测试、接口文档、前端原型文档、联调性能记录、Dify 部署记录、3 个 Prompt 样例、开发笔记、PR 记录。
 7. **Dify 独立交付物**：本地 Dify 1.19.0 启动成功，创建 Chatbot「公文问答助手」；2026-11-11 控制台测试完成 3 个业务问答，2026-11-12 重启后通过 Web App 通道复测 3 个问题均返回 200；未接入主链路。
 
 ## 三、现场演示清单
@@ -71,7 +71,7 @@
 
 - **概念：SSE（Server-Sent Events）**。服务器通过单向 HTTP 长连接持续推送 `event` / `data` 文本块，适合模型逐字输出；本项目后端用 `SseEmitter` 转发，前端用 `fetch + ReadableStream` 解析，完成后发送 `done`，异常发送 `error`。
 - **踩坑：SSE 中文乱码**。现象是测试中中文显示为乱码；原因是响应编码未固定为 UTF-8；解决是 `produces = "text/event-stream;charset=UTF-8"`，测试按 UTF-8 解码。
-- **待验证问题：结构化抽取对模型输出稳定性的依赖**。假设降低 `temperature` 并加强“只输出 JSON”的系统提示可减少重试；验证计划是用 20 段不同类型公文连续抽取，统计首次解析成功率与重试率。
+- **待验证问题：结构化抽取对模型输出稳定性的依赖**。已为抽取请求设置 `temperature=0.0`（`LLM_EXTRACT_TEMPERATURE`），并保留“只输出 JSON”的系统提示；仍需用 20 段不同类型公文连续抽取，统计首次解析成功率与重试率。
 
 ## 七、导师意见
 
